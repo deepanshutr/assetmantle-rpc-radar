@@ -1,0 +1,40 @@
+name: health
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [known.yaml, "radar/**", main.go, .github/workflows/health.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: radar-health
+  cancel-in-progress: false
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - run: go run . health
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      - name: Commit refreshed state + report
+        run: |
+          if git diff --quiet -- data/; then
+            echo "no changes to data/, skipping commit"
+            exit 0
+          fi
+          git config user.email "52166434+deepanshutr@users.noreply.github.com"
+          git config user.name "radar-bot"
+          git add data/
+          git commit -m "radar: refresh state + REPORT.md ($(date -u +%FT%TZ))"
+          git push

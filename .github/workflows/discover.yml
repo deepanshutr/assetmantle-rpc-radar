@@ -1,0 +1,48 @@
+name: discover
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: radar-discover
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - id: discover
+        run: |
+          go run . discover | tee /tmp/discover.log
+          if git diff --quiet -- known.yaml; then
+            echo "added=0" >> "$GITHUB_OUTPUT"
+          else
+            ADDED=$(grep -oP 'added \K\d+' /tmp/discover.log || echo 0)
+            echo "added=$ADDED" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Open PR if new endpoints found
+        if: steps.discover.outputs.added != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BR="discover/$(date -u +%Y-%m-%d)"
+          git config user.email "52166434+deepanshutr@users.noreply.github.com"
+          git config user.name "radar-bot"
+          git checkout -b "$BR"
+          git add known.yaml
+          git commit -m "discover: add ${{ steps.discover.outputs.added }} new endpoint(s)"
+          git push -u origin "$BR"
+          gh pr create \
+            --title "discover: ${{ steps.discover.outputs.added }} new endpoint(s)" \
+            --body "Auto-discovered new entries from chain-registry / cosmos.directory. Review and merge if these look legit." \
+            --head "$BR" --base main

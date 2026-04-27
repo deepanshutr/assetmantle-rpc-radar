@@ -1,0 +1,4 @@
+/radar-bin
+/radar
+*.test
+.env
