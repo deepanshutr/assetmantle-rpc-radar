@@ -1,4 +1,6 @@
+# compiled binary at repo root only (not the radar/ source package)
 /radar-bin
-/radar
+/radar.exe
 *.test
 .env
+
