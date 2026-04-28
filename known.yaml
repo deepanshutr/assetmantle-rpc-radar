@@ -27,8 +27,11 @@ endpoints:
     url: https://assetmantle-api.polkachu.com
     source: polkachu
   - kind: rest
-    url: https://assetmantle-api.publicnode.com
+    url: https://assetmantle-rest.publicnode.com
     source: publicnode
+  - kind: rest
+    url: https://assetmantle-rest.stakerhouse.com
+    source: stakerhouse
   - kind: rest
     url: https://public.stakewolle.com/cosmos/assetmantle/rest
     source: stakewolle
