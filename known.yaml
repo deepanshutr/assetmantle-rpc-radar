@@ -1,56 +1,72 @@
 # Tracked AssetMantle public endpoints.
 # Keep entries grouped by kind; the discover step appends new ones in-place.
 endpoints:
-  # === RPC (Tendermint) ===
-  - kind: rpc
-    url: https://assetmantle-rpc.polkachu.com
-    source: polkachu
-  - kind: rpc
-    url: https://assetmantle-rpc.publicnode.com
-    source: publicnode
-  - kind: rpc
-    url: https://assetmantle-rpc.stakerhouse.com
-    source: stakerhouse
-  - kind: rpc
-    url: https://public.stakewolle.com/cosmos/assetmantle/rpc
-    source: stakewolle
-  - kind: rpc
-    url: https://rpc-assetmantle-ia.cosmosia.notional.ventures
-    source: notional
-  - kind: rpc
-    url: https://rpc.assetmantle.one
-    source: foundation
-    notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
-
-  # === REST (Cosmos LCD) ===
-  - kind: rest
-    url: https://assetmantle-api.polkachu.com
-    source: polkachu
-  - kind: rest
-    url: https://assetmantle-rest.publicnode.com
-    source: publicnode
-  - kind: rest
-    url: https://assetmantle-rest.stakerhouse.com
-    source: stakerhouse
-  - kind: rest
-    url: https://public.stakewolle.com/cosmos/assetmantle/rest
-    source: stakewolle
-  - kind: rest
-    url: https://rest-assetmantle-ia.cosmosia.notional.ventures
-    source: notional
-  - kind: rest
-    url: https://rest.assetmantle.one
-    source: foundation
-    notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
-
-  # === gRPC ===
-  - kind: grpc
-    url: assetmantle-grpc.polkachu.com:443
-    source: polkachu
-  - kind: grpc
-    url: assetmantle-grpc.publicnode.com:443
-    source: publicnode
-  - kind: grpc
-    url: grpc.assetmantle.one:443
-    source: foundation
-    notes: canonical foundation endpoint
+    - kind: rpc
+      url: https://assetmantle-rpc.polkachu.com
+      source: polkachu
+    - kind: rpc
+      url: https://assetmantle-rpc.publicnode.com
+      source: publicnode
+    - kind: rpc
+      url: https://assetmantle-rpc.stakerhouse.com
+      source: stakerhouse
+    - kind: rpc
+      url: https://public.stakewolle.com/cosmos/assetmantle/rpc
+      source: stakewolle
+    - kind: rpc
+      url: https://rpc-assetmantle-ia.cosmosia.notional.ventures
+      source: notional
+    - kind: rpc
+      url: https://rpc.assetmantle.one
+      source: foundation
+      notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
+    - kind: rest
+      url: https://assetmantle-api.polkachu.com
+      source: polkachu
+    - kind: rest
+      url: https://assetmantle-rest.publicnode.com
+      source: publicnode
+    - kind: rest
+      url: https://assetmantle-rest.stakerhouse.com
+      source: stakerhouse
+    - kind: rest
+      url: https://public.stakewolle.com/cosmos/assetmantle/rest
+      source: stakewolle
+    - kind: rest
+      url: https://rest-assetmantle-ia.cosmosia.notional.ventures
+      source: notional
+    - kind: rest
+      url: https://rest.assetmantle.one
+      source: foundation
+      notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
+    - kind: grpc
+      url: assetmantle-grpc.polkachu.com:443
+      source: polkachu
+    - kind: grpc
+      url: assetmantle-grpc.publicnode.com:443
+      source: publicnode
+    - kind: grpc
+      url: grpc.assetmantle.one:443
+      source: foundation
+      notes: canonical foundation endpoint
+    - kind: rpc
+      url: https://rpc.mantle.paranorm.pro:443
+      source: chain-registry:paranorm
+    - kind: rpc
+      url: https://assetmantle-rpc.publicnode.com:443
+      source: chain-registry:Allnodes ⚡️ Nodes & Staking
+    - kind: rest
+      url: https://api-assetmantle-ia.cosmosia.notional.ventures
+      source: chain-registry:Notional
+    - kind: rest
+      url: https://api.mantle.paranorm.pro:443
+      source: chain-registry:paranorm
+    - kind: grpc
+      url: grpc-assetmantle-ia.cosmosia.notional.ventures:443
+      source: chain-registry:Notional
+    - kind: grpc
+      url: assetmantle-grpc.polkachu.com:14690
+      source: chain-registry:Polkachu
+    - kind: grpc
+      url: assetmantle-grpc.stakerhouse.com:443
+      source: chain-registry:StakerHouse
