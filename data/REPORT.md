@@ -1,6 +1,6 @@
 # AssetMantle endpoint radar
 
-_Generated 2026-06-14T07:30:27Z — automated, do not edit._
+_Generated 2026-06-15T07:49:01Z — automated, do not edit._
 
 **8/15 endpoints healthy.**
 
@@ -8,29 +8,29 @@ _Generated 2026-06-14T07:30:27Z — automated, do not edit._
 
 | URL | Status | Height | Archive | TLS | Latency p50/p95 | Notes |
 |---|---|---|---|---|---|---|
-| `https://assetmantle-rpc.polkachu.com` | ✓ | 22851627 | no | ✓ 32d (WE1) | 194/475 ms |  |
-| `https://assetmantle-rpc.publicnode.com` | ✗ | — | — | ✓ 84d (WE1) | — | _err: http 403_ |
-| `https://assetmantle-rpc.stakerhouse.com` | ✓ | 22851627 | no | ✓ 66d (WE1) | 181/622 ms |  |
-| `https://public.stakewolle.com/cosmos/assetmantle/rpc` | ✓ | 22851627 | no | ✓ 59d (WE1) | 215/536 ms |  |
+| `https://assetmantle-rpc.polkachu.com` | ✓ | 22867512 | no | ✓ 31d (WE1) | 114/320 ms |  |
+| `https://assetmantle-rpc.publicnode.com` | ✗ | — | — | ✓ 83d (WE1) | — | _err: http 403_ |
+| `https://assetmantle-rpc.stakerhouse.com` | ✓ | 22867512 | no | ✓ 65d (WE1) | 104/341 ms |  |
+| `https://public.stakewolle.com/cosmos/assetmantle/rpc` | ✓ | 22867512 | no | ✓ 58d (WE1) | 132/286 ms |  |
 | `https://rpc-assetmantle-ia.cosmosia.notional.ventures` | ✗ | — | — | — | — | _err: Get "https://rpc-assetmantle-ia.cosmosia.notional.ventures/…_ |
-| `https://rpc.assetmantle.one` | ✗ | — | — | ✓ 32d (R13) | — | _err: http 402_ |
+| `https://rpc.assetmantle.one` | ✗ | — | — | ✓ 31d (R13) | — | _err: http 402_ |
 
 ## REST (6)
 
 | URL | Status | Height | Archive | TLS | Latency p50/p95 | Notes |
 |---|---|---|---|---|---|---|
-| `https://assetmantle-api.polkachu.com` | ✓ | 22851627 | no | ✓ 32d (WE1) | 188/446 ms |  |
-| `https://assetmantle-rest.publicnode.com` | ✗ | — | — | ✓ 84d (WE1) | — | _err: http 403_ |
-| `https://assetmantle-rest.stakerhouse.com` | ✓ | 22851627 | no | ✓ 66d (WE1) | 190/576 ms |  |
-| `https://public.stakewolle.com/cosmos/assetmantle/rest` | ✓ | 22851627 | no | ✓ 59d (WE1) | 225/454 ms |  |
+| `https://assetmantle-api.polkachu.com` | ✓ | 22867512 | no | ✓ 31d (WE1) | 134/359 ms |  |
+| `https://assetmantle-rest.publicnode.com` | ✗ | — | — | ✓ 83d (WE1) | — | _err: http 403_ |
+| `https://assetmantle-rest.stakerhouse.com` | ✓ | 22867512 | no | ✓ 65d (WE1) | 118/409 ms |  |
+| `https://public.stakewolle.com/cosmos/assetmantle/rest` | ✓ | 22867512 | no | ✓ 58d (WE1) | 138/332 ms |  |
 | `https://rest-assetmantle-ia.cosmosia.notional.ventures` | ✗ | — | — | — | — | _err: Get "https://rest-assetmantle-ia.cosmosia.notional.ventures…_ |
-| `https://rest.assetmantle.one` | ✗ | — | — | ✓ 32d (R13) | — | _err: http 402_ |
+| `https://rest.assetmantle.one` | ✗ | — | — | ✓ 31d (R13) | — | _err: http 402_ |
 
 ## GRPC (3)
 
 | URL | Status | Height | Archive | TLS | Latency p50/p95 | Notes |
 |---|---|---|---|---|---|---|
 | `assetmantle-grpc.polkachu.com:443` | ✗ | — | — | — | — | _err: tls dial: dial tcp 65.108.131.174:443: i/o timeout_ |
-| `assetmantle-grpc.publicnode.com:443` | ✓ | — | no | ✓ 84d (WE1) | 60/0 ms |  |
-| `grpc.assetmantle.one:443` | ✓ | — | no | ✓ 32d (R13) | 116/0 ms | canonical foundation endpoint |
+| `assetmantle-grpc.publicnode.com:443` | ✓ | — | no | ✓ 83d (WE1) | 45/0 ms |  |
+| `grpc.assetmantle.one:443` | ✓ | — | no | ✓ 31d (R13) | 27/0 ms | canonical foundation endpoint |
 
