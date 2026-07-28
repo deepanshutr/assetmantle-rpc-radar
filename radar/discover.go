@@ -39,9 +39,27 @@ func Discover(k *Known) (int, error) {
 	return added, nil
 }
 
+// normalize is the identity used to decide whether a discovered endpoint is
+// already tracked.
+//
+// For http(s) URLs the default port is not part of the identity, so
+// `host` and `host:443` collapse to one entry. Thirteen unmerged discover
+// branches each re-proposed `https://assetmantle-rpc.polkachu.com:443`
+// alongside the tracked `https://assetmantle-rpc.polkachu.com`; once best.json
+// feeds real workflows, a duplicated host silently doubles that provider's
+// weight in the ranking.
+//
+// Schemeless entries are left alone: gRPC is bare host:port, where :443 and
+// :14690 are genuinely different endpoints (polkachu serves gRPC on the latter).
 func normalize(u string) string {
-	u = strings.TrimRight(u, "/")
-	return strings.ToLower(u)
+	u = strings.ToLower(strings.TrimRight(u, "/"))
+	if rest, ok := strings.CutPrefix(u, "https://"); ok {
+		return "https://" + strings.TrimSuffix(rest, ":443")
+	}
+	if rest, ok := strings.CutPrefix(u, "http://"); ok {
+		return "http://" + strings.TrimSuffix(rest, ":80")
+	}
+	return u
 }
 
 // chain-registry shape (subset)

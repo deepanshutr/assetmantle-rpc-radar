@@ -16,6 +16,7 @@ const (
 	knownPath  = "known.yaml"
 	statePath  = "data/state.json"
 	reportPath = "data/REPORT.md"
+	bestPath   = "data/best.json"
 )
 
 func main() {
@@ -67,6 +68,11 @@ func runHealth() error {
 	}
 	results := radar.ProbeAll(known.Endpoints)
 	if err := radar.WriteReport(reportPath, results); err != nil {
+		return err
+	}
+	// The machine-readable half of the report: the ranked recommendation a
+	// consumer reads instead of pinning endpoints by hand.
+	if err := radar.WriteBest(bestPath, results); err != nil {
 		return err
 	}
 

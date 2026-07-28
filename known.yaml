@@ -1,5 +1,10 @@
 # Tracked AssetMantle public endpoints.
 # Keep entries grouped by kind; the discover step appends new ones in-place.
+#
+# Being listed here means "probe it and report it", not "it works". Dead
+# third-party mirrors stay listed so data/REPORT.md keeps telling the truth
+# about the public surface; they never page (see radar/alert.go) and they are
+# never recommended in data/best.json.
 endpoints:
   # === RPC (Tendermint) ===
   - kind: rpc
@@ -18,9 +23,15 @@ endpoints:
     url: https://rpc-assetmantle-ia.cosmosia.notional.ventures
     source: notional
   - kind: rpc
+    url: https://mantle-rpc.dungeon.games
+    source: dungeon
+  - kind: rpc
+    url: https://rpc.mantle.paranorm.pro
+    source: paranorm
+  - kind: rpc
     url: https://rpc.assetmantle.one
     source: foundation
-    notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
+    notes: canonical foundation endpoint
 
   # === REST (Cosmos LCD) ===
   - kind: rest
@@ -39,17 +50,40 @@ endpoints:
     url: https://rest-assetmantle-ia.cosmosia.notional.ventures
     source: notional
   - kind: rest
+    url: https://api-assetmantle-ia.cosmosia.notional.ventures
+    source: notional
+  - kind: rest
+    url: https://mantle-lcd.dungeon.games
+    source: dungeon
+  - kind: rest
+    url: https://api.mantle.paranorm.pro
+    source: paranorm
+  - kind: rest
     url: https://rest.assetmantle.one
     source: foundation
-    notes: canonical foundation endpoint (currently broken; this radar tracks the fix)
+    notes: canonical foundation endpoint
 
   # === gRPC ===
+  # polkachu serves gRPC on 14690, not 443: the old :443 entry probed as a hard
+  # tcp timeout (nothing listening) and was reported as an outage every morning
+  # for weeks. 14690 does listen, but in PLAINTEXT — the probe is TLS-only and
+  # reports "first record does not look like a TLS handshake". So this still
+  # reads as down, now for an accurate reason. Teaching probe.go to fall back to
+  # an insecure dial would make it usable; that is a transport-security call, so
+  # it is filed separately rather than folded in here.
   - kind: grpc
-    url: assetmantle-grpc.polkachu.com:443
+    url: assetmantle-grpc.polkachu.com:14690
     source: polkachu
+    notes: plaintext gRPC; TLS-only probe cannot verify it
   - kind: grpc
     url: assetmantle-grpc.publicnode.com:443
     source: publicnode
+  - kind: grpc
+    url: assetmantle-grpc.stakerhouse.com:443
+    source: stakerhouse
+  - kind: grpc
+    url: grpc-assetmantle-ia.cosmosia.notional.ventures:443
+    source: notional
   - kind: grpc
     url: grpc.assetmantle.one:443
     source: foundation
