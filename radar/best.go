@@ -33,14 +33,26 @@ func BestEndpoints(results []Result) map[string][]string {
 		if !r.OK {
 			continue
 		}
-		// An empty Network means the probe could not read a chain-id (grpc);
-		// a populated one that disagrees is disqualifying.
-		if r.Network != "" && r.Network != expectedNetwork {
+		if r.Kind == "grpc" {
+			// The grpc probe is a bare TLS dial, so it can read neither
+			// chain-id nor height. This list carries REACHABILITY ONLY and
+			// none of the guarantees below — see the README caveat.
+			byKind[r.Kind] = append(byKind[r.Kind], r)
 			continue
 		}
-		// Height is only meaningful where the probe can read it.
-		if r.Kind != "grpc" && median > 0 && r.BlockHeight > 0 &&
-			median-r.BlockHeight > maxLagBlocks {
+		// Require PROOF that the endpoint serves this chain and is current,
+		// rather than giving unread fields the benefit of the doubt.
+		//
+		// A 200 carrying an unparseable body — a gateway error page, or the
+		// JSON-RPC error envelope Tendermint returns with HTTP 200 — unmarshals
+		// cleanly and leaves Network empty and BlockHeight zero. The old
+		// "empty means grpc, so allow it" clause admitted exactly that, and the
+		// height check self-disabled on BlockHeight == 0. Error pages are also
+		// FAST, so the bogus entry sorted to index 0 and became the pick.
+		if r.Network != expectedNetwork || r.BlockHeight <= 0 {
+			continue
+		}
+		if median > 0 && median-r.BlockHeight > maxLagBlocks {
 			continue
 		}
 		byKind[r.Kind] = append(byKind[r.Kind], r)

@@ -61,10 +61,17 @@ https://raw.githubusercontent.com/deepanshutr/assetmantle-rpc-radar/main/data/be
 }
 ```
 
-Each list is a **fallback chain in preference order**, not a single pick: only
-endpoints that are healthy, serving `mantle-1`, and within 30 blocks of the
-median height, ranked by p50 latency. Walk it in order so one provider having a
-bad minute costs a retry rather than a run.
+Each list is a **fallback chain in preference order**, not a single pick. Walk it
+in order so one provider having a bad minute costs a retry rather than a run.
+
+For `rpc` and `rest`, an entry has **proved** it is healthy, reports `mantle-1`,
+and is within 30 blocks of the median height, and entries are ranked by p50
+latency. Proof is required rather than assumed: a 200 response carrying an
+unparseable body leaves both chain-id and height unread, and error pages are
+fast enough to sort first.
+
+The `grpc` list is **reachability only**. That probe is a bare TLS dial, so it
+reads neither chain-id nor height and none of the guarantees above apply to it.
 
 Consumers must keep their own pinned default and fall back to it if the fetch
 fails, so this file can never become a new single point of failure.
