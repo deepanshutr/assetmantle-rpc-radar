@@ -66,16 +66,30 @@ func runHealth() error {
 		return err
 	}
 	results := radar.ProbeAll(known.Endpoints)
-	if err := radar.WriteState(statePath, results); err != nil {
-		return err
-	}
 	if err := radar.WriteReport(reportPath, results); err != nil {
 		return err
 	}
-	if alerts := radar.CriticalAlerts(prev, results); len(alerts) > 0 {
+
+	// Deliver BEFORE advancing the baseline.
+	//
+	// state.json records what the operator has already been TOLD, not merely
+	// what was last observed. Writing it first and then swallowing a send
+	// failure would consume the transition: the next run sees was == now and
+	// stays silent, so one dropped Telegram call silences a real outage
+	// permanently. That is strictly worse than the daily repetition this
+	// change removes — repetition is annoying, a lost page is the failure
+	// monitoring exists to prevent.
+	//
+	// On failure the baseline stays put, the run goes red, and the workflow's
+	// commit step is skipped, so the next run re-derives and re-fires.
+	alerts := radar.CriticalAlerts(prev, results)
+	if len(alerts) > 0 {
 		if err := radar.SendAlerts(alerts, runURL()); err != nil {
-			fmt.Fprintln(os.Stderr, "alert:", err)
+			return fmt.Errorf("alert delivery failed, baseline deliberately not advanced: %w", err)
 		}
+	}
+	if err := radar.WriteState(statePath, results); err != nil {
+		return err
 	}
 	return nil
 }

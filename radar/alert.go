@@ -97,7 +97,10 @@ func CriticalAlerts(prev, cur []Result) []Alert {
 			})
 		}
 	}
-	return append(out, blackoutAlerts(prev, cur)...)
+	// Blackouts first: "the chain is unreachable over this protocol" is the most
+	// severe line the system emits, and a tail-truncated message would drop it
+	// precisely when everything is down.
+	return append(blackoutAlerts(prev, cur), out...)
 }
 
 // blackoutAlerts fires when a protocol loses its last healthy endpoint. This is
@@ -177,14 +180,23 @@ func FormatAlerts(alerts []Alert, runURL string) string {
 		}
 		lines = append(lines, line)
 	}
-	body := strings.Join(lines, "\n")
+	// The run link is what makes a page actionable, so it must survive
+	// truncation. Reserve room for it and cut the alert lines instead — the
+	// old order appended it last and dropped it exactly when the incident was
+	// large enough to need it.
+	suffix := ""
 	if runURL != "" {
-		body += "\n" + runURL
+		suffix = "\n" + runURL
 	}
-	if len(body) > alertTextMax {
-		body = body[:alertTextMax-3] + "..."
+	body := strings.Join(lines, "\n")
+	if len(body)+len(suffix) > alertTextMax {
+		keep := alertTextMax - len(suffix) - 4
+		if keep < 0 {
+			keep = 0
+		}
+		body = body[:keep] + "\n..."
 	}
-	return body
+	return body + suffix
 }
 
 // SendAlerts pushes one grouped Telegram message via TELEGRAM_BOT_TOKEN +
@@ -197,6 +209,13 @@ func SendAlerts(alerts []Alert, runURL string) error {
 	tok := os.Getenv("TELEGRAM_BOT_TOKEN")
 	chat := os.Getenv("TELEGRAM_CHAT_ID")
 	if tok == "" || chat == "" {
+		// Locally this is expected and harmless. In CI it means a real page is
+		// being dropped, and the caller MUST NOT advance the baseline over it —
+		// returning nil here would consume the transition silently, which is
+		// the exact failure this ordering exists to prevent.
+		if os.Getenv("GITHUB_ACTIONS") == "true" {
+			return fmt.Errorf("telegram credentials unset; %d alert(s) undelivered", len(alerts))
+		}
 		fmt.Fprintln(os.Stderr, "alerts: telegram creds unset, skipping")
 		return nil
 	}
