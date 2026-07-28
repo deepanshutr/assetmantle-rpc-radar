@@ -58,19 +58,51 @@ func runHealth() error {
 	if err != nil {
 		return err
 	}
-	results := radar.ProbeAll(known.Endpoints)
-	if err := radar.WriteState(statePath, results); err != nil {
+	// Read the previous run's state before it is overwritten. The health
+	// workflow commits data/state.json back to the repo, so the checkout is
+	// the baseline: alerts fire on transitions, never on standing state.
+	prev, err := radar.ReadState(statePath)
+	if err != nil {
 		return err
 	}
+	results := radar.ProbeAll(known.Endpoints)
 	if err := radar.WriteReport(reportPath, results); err != nil {
 		return err
 	}
-	if alerts := radar.CriticalAlerts(results); len(alerts) > 0 {
-		if err := radar.SendAlerts(alerts); err != nil {
-			fmt.Fprintln(os.Stderr, "alert:", err)
+
+	// Deliver BEFORE advancing the baseline.
+	//
+	// state.json records what the operator has already been TOLD, not merely
+	// what was last observed. Writing it first and then swallowing a send
+	// failure would consume the transition: the next run sees was == now and
+	// stays silent, so one dropped Telegram call silences a real outage
+	// permanently. That is strictly worse than the daily repetition this
+	// change removes — repetition is annoying, a lost page is the failure
+	// monitoring exists to prevent.
+	//
+	// On failure the baseline stays put, the run goes red, and the workflow's
+	// commit step is skipped, so the next run re-derives and re-fires.
+	alerts := radar.CriticalAlerts(prev, results)
+	if len(alerts) > 0 {
+		if err := radar.SendAlerts(alerts, runURL()); err != nil {
+			return fmt.Errorf("alert delivery failed, baseline deliberately not advanced: %w", err)
 		}
 	}
+	if err := radar.WriteState(statePath, results); err != nil {
+		return err
+	}
 	return nil
+}
+
+// runURL links back to the Actions run; empty outside CI so local runs stay bare.
+func runURL() string {
+	server := os.Getenv("GITHUB_SERVER_URL")
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	id := os.Getenv("GITHUB_RUN_ID")
+	if server == "" || repo == "" || id == "" {
+		return ""
+	}
+	return server + "/" + repo + "/actions/runs/" + id
 }
 
 func runDiscover() error {

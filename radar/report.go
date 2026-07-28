@@ -2,6 +2,7 @@ package radar
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -25,6 +26,27 @@ func WriteState(path string, results []Result) error {
 		return err
 	}
 	return os.WriteFile(path, append(b, '\n'), 0o644)
+}
+
+// ReadState loads the state file written by the previous run, which the health
+// workflow commits back to the repo. A missing or empty file yields nil results
+// and no error: alerting treats that as "no baseline" and stays silent rather
+// than paging on a bootstrap.
+func ReadState(path string) ([]Result, error) {
+	b, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	var wrap struct {
+		Results []Result `json:"results"`
+	}
+	if err := json.Unmarshal(b, &wrap); err != nil {
+		return nil, err
+	}
+	return wrap.Results, nil
 }
 
 // WriteReport writes a per-kind markdown summary.
