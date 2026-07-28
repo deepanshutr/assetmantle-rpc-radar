@@ -143,7 +143,13 @@ func blackoutAlerts(prev, cur []Result) []Alert {
 func medianBlockHeight(results []Result) int64 {
 	var hs []int64
 	for _, r := range results {
-		if r.OK && r.BlockHeight > 0 && r.Kind != "grpc" {
+		// Only nodes that PROVED they serve this chain may move the median.
+		// It gates both the stuck check here and admission to best.json, so a
+		// wrong-chain node answering with an unrelated height (any of the
+		// several "mantle" hosts that are the Ethereum L2, ~80M blocks) would
+		// drag it far enough to drop every real endpoint as "lagging" while
+		// falsely paging the healthy ones as "stuck".
+		if r.OK && r.BlockHeight > 0 && r.Kind != "grpc" && r.Network == expectedNetwork {
 			hs = append(hs, r.BlockHeight)
 		}
 	}

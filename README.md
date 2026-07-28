@@ -22,6 +22,7 @@ Health + discovery watcher for AssetMantle public endpoints (RPC / REST / gRPC).
 known.yaml          # tracked endpoints (kind, url, notes)
 data/state.json     # last full probe snapshot (committed)
 data/REPORT.md      # human-readable per-endpoint table
+data/best.json      # machine-readable: ranked healthy endpoints, per kind
 radar/              # Go package
   probe.go          # /status + /block?height=1 + TLS + latency
   discover.go       # chain-registry / cosmos.directory / polkachu peers
@@ -37,6 +38,43 @@ go run . health             # probe all known endpoints, regenerate state + repo
 go run . discover           # scrape sources, update known.yaml
 TELEGRAM_BOT_TOKEN=… TELEGRAM_CHAT_ID=… go run . health   # with alerts
 ```
+
+## Consuming endpoints (`data/best.json`)
+
+Stop pinning endpoints per workflow. `data/best.json` is regenerated on every
+health run and committed, so it is fetchable as a raw file with no service to
+operate:
+
+```
+https://raw.githubusercontent.com/deepanshutr/assetmantle-rpc-radar/main/data/best.json
+```
+
+```json
+{
+  "generated_at": "2026-07-28T05:00:12Z",
+  "network": "mantle-1",
+  "endpoints": {
+    "rpc":  ["https://assetmantle-rpc.stakerhouse.com", "..."],
+    "rest": ["https://assetmantle-rest.stakerhouse.com", "..."],
+    "grpc": ["assetmantle-grpc.publicnode.com:443", "..."]
+  }
+}
+```
+
+Each list is a **fallback chain in preference order**, not a single pick. Walk it
+in order so one provider having a bad minute costs a retry rather than a run.
+
+For `rpc` and `rest`, an entry has **proved** it is healthy, reports `mantle-1`,
+and is within 30 blocks of the median height, and entries are ranked by p50
+latency. Proof is required rather than assumed: a 200 response carrying an
+unparseable body leaves both chain-id and height unread, and error pages are
+fast enough to sort first.
+
+The `grpc` list is **reachability only**. That probe is a bare TLS dial, so it
+reads neither chain-id nor height and none of the guarantees above apply to it.
+
+Consumers must keep their own pinned default and fall back to it if the fetch
+fails, so this file can never become a new single point of failure.
 
 ## Discovery sources
 
