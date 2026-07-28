@@ -4,7 +4,17 @@ Health + discovery watcher for AssetMantle public endpoints (RPC / REST / gRPC).
 
 - **Daily** at 06:00 UTC: probe every known endpoint, commit `data/state.json` + regenerated `data/REPORT.md`.
 - **Weekly** Mon 06:00 UTC: scrape discovery sources, append new endpoints to `known.yaml` if any.
-- **Critical alerts** (host down, height stuck > 30 min, cert expiring < 14 days) are pushed to Telegram (`@x_anyhow_x_bot`) via secrets.
+- **Alerts** (host down, height stuck > 30 min, cert expiring < 14 days) are pushed to Telegram
+  (`@x_anyhow_x_bot`) via secrets, subject to two rules:
+  - **Only on a change of state.** A condition that held on the previous run is not re-sent. The
+    previous run's committed `data/state.json` is the baseline; a missing baseline is silent.
+  - **Only for endpoints we operate** (`source: foundation`). Third-party mirrors break for weeks
+    at a time and we cannot fix them, so they stay in `data/REPORT.md` and never page. The one
+    exception is a **blackout** — a protocol losing its last healthy endpoint anywhere — which
+    pages regardless of ownership, because it means the chain is unreachable over that protocol.
+
+  A healthy day sends nothing. Format is plain ASCII, one line per change, `ACTION` for what needs
+  a human and `AUTO` for what recovered on its own, linking the run instead of pasting the table.
 
 ## Files
 

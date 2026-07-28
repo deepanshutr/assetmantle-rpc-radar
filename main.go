@@ -58,6 +58,13 @@ func runHealth() error {
 	if err != nil {
 		return err
 	}
+	// Read the previous run's state before it is overwritten. The health
+	// workflow commits data/state.json back to the repo, so the checkout is
+	// the baseline: alerts fire on transitions, never on standing state.
+	prev, err := radar.ReadState(statePath)
+	if err != nil {
+		return err
+	}
 	results := radar.ProbeAll(known.Endpoints)
 	if err := radar.WriteState(statePath, results); err != nil {
 		return err
@@ -65,12 +72,23 @@ func runHealth() error {
 	if err := radar.WriteReport(reportPath, results); err != nil {
 		return err
 	}
-	if alerts := radar.CriticalAlerts(results); len(alerts) > 0 {
-		if err := radar.SendAlerts(alerts); err != nil {
+	if alerts := radar.CriticalAlerts(prev, results); len(alerts) > 0 {
+		if err := radar.SendAlerts(alerts, runURL()); err != nil {
 			fmt.Fprintln(os.Stderr, "alert:", err)
 		}
 	}
 	return nil
+}
+
+// runURL links back to the Actions run; empty outside CI so local runs stay bare.
+func runURL() string {
+	server := os.Getenv("GITHUB_SERVER_URL")
+	repo := os.Getenv("GITHUB_REPOSITORY")
+	id := os.Getenv("GITHUB_RUN_ID")
+	if server == "" || repo == "" || id == "" {
+		return ""
+	}
+	return server + "/" + repo + "/actions/runs/" + id
 }
 
 func runDiscover() error {
