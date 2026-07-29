@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-28T10:06:56.933989626Z",
+  "generated_at": "2026-07-29T08:17:32.794142296Z",
   "network": "mantle-1",
   "endpoints": {
     "grpc": [
@@ -11,8 +11,8 @@
       "https://mantle-lcd.dungeon.games",
       "https://assetmantle-api.polkachu.com",
       "https://assetmantle-rest.stakerhouse.com",
-      "https://public.stakewolle.com/cosmos/assetmantle/rest",
-      "https://rest.assetmantle.one"
+      "https://rest.assetmantle.one",
+      "https://public.stakewolle.com/cosmos/assetmantle/rest"
     ],
     "rpc": [
       "https://mantle-rpc.dungeon.games",
