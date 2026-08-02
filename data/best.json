@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-08-01T08:02:09.193670154Z",
+  "generated_at": "2026-08-02T08:03:03.505080019Z",
   "network": "mantle-1",
   "endpoints": {
     "grpc": [
+      "grpc.assetmantle.one:443",
       "assetmantle-grpc.publicnode.com:443",
-      "assetmantle-grpc.stakerhouse.com:443",
-      "grpc.assetmantle.one:443"
+      "assetmantle-grpc.stakerhouse.com:443"
     ],
     "rest": [
       "https://mantle-lcd.dungeon.games",
