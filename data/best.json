@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-08-23T06:21:29.976445033Z",
+  "generated_at": "2026-08-24T06:34:27.523449169Z",
   "network": "mantle-1",
   "endpoints": {
     "grpc": [
-      "assetmantle-grpc.stakerhouse.com:443",
+      "assetmantle-grpc.publicnode.com:443",
       "grpc.assetmantle.one:443",
-      "assetmantle-grpc.publicnode.com:443"
+      "assetmantle-grpc.stakerhouse.com:443"
     ],
     "rest": [
       "https://mantle-lcd.dungeon.games",
       "https://rest.assetmantle.one",
-      "https://assetmantle-api.polkachu.com",
       "https://assetmantle-rest.stakerhouse.com",
+      "https://assetmantle-api.polkachu.com",
       "https://public.stakewolle.com/cosmos/assetmantle/rest"
     ],
     "rpc": [
