@@ -1,10 +1,15 @@
 {
-  "generated_at": "2026-09-05T09:36:33.42443689Z",
+  "generated_at": "2026-09-06T09:51:32.74335455Z",
   "network": "mantle-1",
   "endpoints": {
     "grpc": [
       "assetmantle-grpc.publicnode.com:443",
       "grpc.assetmantle.one:443"
+    ],
+    "rest": [
+      "https://mantle-lcd.dungeon.games",
+      "https://rest.assetmantle.one",
+      "https://public.stakewolle.com/cosmos/assetmantle/rest"
     ]
   }
 }
